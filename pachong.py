@@ -23,9 +23,14 @@ urllib2.install_opener(opener)
 
 origin_url = 'http://api.douban.com/book/subject/'
 
-for i in range(1000001,1999999):    
+with open('./start_subject_id' , 'rb') as f:
+    start_subject_id = f.readline()
+    start_subject_id = start_subject_id[0:7]
+    print 'start from subject %d' % int(start_subject_id)
+
+for i in range(int(start_subject_id),1999999):    
     print 'Subject ID: %d' % i 
-    # time.sleep(3)
+    #time.sleep(3)
     #if not os.path.exists('./book%d' % i):
     #    os.mkdir('./book%d' % i)
     #os.chdir('./book%d' % i)
@@ -34,20 +39,30 @@ for i in range(1000001,1999999):
     request = urllib2.Request(url)
     fails = 0
     while True:
-        if fails >= 5:
-            fails = 0
-            print 'Fail in connection. Waiting for next chance.'
-            time.sleep(10)
+        if fails >= 15:
+            print 'connettion error,please try later'
+            print 'stopped in subject %d' % i
+            with open('./start_subject_id' , 'wb') as f:
+                f.write(str(i))
+                f.close()
+            print 'exiting the program'
+            exit()
         try:
             response = urllib2.urlopen(request , None , 5)
             text = response.read()
-        except:
+        except urllib2.HTTPError , e:
+            if str(e) == 'HTTP Error 404: Not Found':
+                print e
+                print 'ignore the subject %d' % i
+                fails = 30
+                break
             fails += 1
+            print e
             print 'an error occured , trying another request'
         else:
             break
 
-    if text.find('wrong subject id') == -1:
+    if fails == 30:
         continue
 
     soup = BeautifulSoup(text)
