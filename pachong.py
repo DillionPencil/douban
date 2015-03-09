@@ -51,14 +51,13 @@ for i in range(int(start_subject_id),1999999):
             response = urllib2.urlopen(request , None , 5)
             text = response.read()
         except urllib2.HTTPError , e:
-            if str(e) == 'HTTP Error 404: Not Found':
-                print e
-                print 'ignore the subject %d' % i
-                fails = 30
-                break
-            fails += 1
             print e
-            print 'an error occured , trying another request'
+            print 'ignore the subject %d' % i
+            fails = 30
+            break
+        except :
+            fails += 1
+            continue
         else:
             break
 
