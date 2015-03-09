@@ -14,16 +14,18 @@ import time
 from PIL import Image
 from bs4 import BeautifulSoup
 
+proxy_support = urllib2.ProxyHandler({'http':'http://127.0.0.1:8087'})
+
 cj = cookielib.LWPCookieJar()
 cookie_support = urllib2.HTTPCookieProcessor(cj)
-opener = urllib2.build_opener(cookie_support , urllib2.HTTPHandler)
+opener = urllib2.build_opener(proxy_support , cookie_support , urllib2.HTTPHandler)
 urllib2.install_opener(opener)
 
 origin_url = 'http://api.douban.com/book/subject/'
 
-for i in range(1001603,1999999):    
+for i in range(1000001,1999999):    
     print 'Subject ID: %d' % i 
-    time.sleep(3)
+    # time.sleep(3)
     #if not os.path.exists('./book%d' % i):
     #    os.mkdir('./book%d' % i)
     #os.chdir('./book%d' % i)
