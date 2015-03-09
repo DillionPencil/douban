@@ -37,15 +37,18 @@ for i in range(1000001,1999999):
         if fails >= 5:
             fails = 0
             print 'Fail in connection. Waiting for next chance.'
-            time.sleep(120)
+            time.sleep(10)
         try:
-            response = urllib2.urlopen(request , None , 10)
+            response = urllib2.urlopen(request , None , 5)
             text = response.read()
         except:
             fails += 1
-            print 'Timeout , trying another request'
+            print 'an error occured , trying another request'
         else:
             break
+
+    if text.find('wrong subject id') == -1:
+        continue
 
     soup = BeautifulSoup(text)
 
